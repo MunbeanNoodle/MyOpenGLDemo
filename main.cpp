@@ -4,6 +4,8 @@
 
 //窗口大小改变时，视口也应调整
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+//简单的输入控制
+void processInput(GLFWwindow *window);
 
 int main()
 {
@@ -37,9 +39,18 @@ int main()
 	//注册视口调整回调函数
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	//渲染循环
+	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
 	{
+		processInput(window);//检查输入，在每一帧做出处理
+
+		//在循环开始时清屏
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);//设置清屏颜色【状态设置】
+		glClear(GL_COLOR_BUFFER_BIT);//清空颜色缓冲，整个颜色缓冲填充为清屏颜色【状态使用】
+
+		//渲染指令
+		//......
+
 		glfwSwapBuffers(window);//交换颜色缓冲（储存GLFW窗口每一个像素颜色值的大缓冲），在本次循环中用来绘制并输出
 		glfwPollEvents();//检查是否触发事件（键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数
 	}
@@ -54,4 +65,12 @@ int main()
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)//检查返回键（Esc）是否被按下
+	{
+		glfwSetWindowShouldClose(window, true);
+	}
 }
