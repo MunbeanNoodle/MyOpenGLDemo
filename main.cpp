@@ -2,6 +2,22 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+//顶点坐标
+float vertices[] =
+{
+	-0.5f, -0.5f, 0.0f,
+	 0.5f, -0.5f, 0.0f,
+	 0.0f,  0.5f, 0.0f
+};
+
+//顶点着色器
+const char *vertexShader = "#version 330 core\n"
+	"layout (location = 0) in vec3 aPos;\n"
+	"void main()\n"
+	"{\n"
+	"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);"
+	"}\0";
+
 //窗口大小改变时，视口也应调整
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 //简单的输入控制
@@ -38,6 +54,12 @@ int main()
 	glViewport(0, 0, 800, 600);//para1和para2控制窗口左下角的位置，para3和para4控制渲染窗口宽度和高度
 	//注册视口调整回调函数
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	//顶点缓冲对象(Vertex Buffer Object, VBO)
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
