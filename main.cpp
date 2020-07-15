@@ -3,11 +3,31 @@
 #include <iostream>
 
 //顶点数据
+//float vertices[] =
+//{
+//	//第一个三角形
+//	 0.5f,  0.5f,  0.0f,//右上角
+//	 0.5f, -0.5f,  0.0f,//右下角
+//	-0.5f,  0.5f,  0.0f,//左上角
+//	//第二个三角形
+//	 0.5f, -0.5f,  0.0f,//右下角
+//	-0.5f, -0.5f,  0.0f,//左下角
+//	-0.5f,  0.5f,  0.0f,//左上角
+//};
+//有重复顶点
 float vertices[] =
 {
-	-0.5f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f
+	 0.5f,  0.5f,  0.0f,//右上角
+	 0.5f, -0.5f,  0.0f,//右下角
+	-0.5f, -0.5f,  0.0f,//左下角
+	-0.5f,  0.5f,  0.0f,//左上角
+};
+
+//索引，用于索引绘制(Indexed Drawing)
+unsigned int indices[] =
+{
+	0, 1, 3, //第一个三角形
+	1, 2, 3  //第二个三角形
 };
 
 //顶点着色器源码，使用着色器语言GLSL(OpenGL Shading Language)编写
@@ -74,6 +94,12 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);//把新创建的缓冲绑定到GL_ARRAY_BUFFER目标上
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);//把定义的顶点数据复制到缓冲的内存中
 	//GL_STATIC_DRAW 数据(几乎)不会改变; GL_DYNAMIC_DRAW 数据会改变; GL_STREAM_DRAW 数据每次绘制时都会改变
+
+	//索引缓冲对象(Element Buffer Object, EBO or Index Buffer Object, IBO)，储存不同的点
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	
 	//顶点着色器对象，在运行时动态编译顶点着色器源码
 	unsigned int vertexShader;//ID
@@ -145,7 +171,9 @@ int main()
 		//......
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);//交换颜色缓冲（储存GLFW窗口每一个像素颜色值的大缓冲），在本次循环中用来绘制并输出
 		glfwPollEvents();//检查是否触发事件（键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数
