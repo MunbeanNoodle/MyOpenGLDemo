@@ -84,6 +84,11 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 //简单的输入控制
 void processInput(GLFWwindow *window);
 
+//摄像机
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
 int main()
 {
 	//实例化GLFW窗口
@@ -206,10 +211,7 @@ int main()
 	ourShader.setInt("ourTexture2", 1);
 	
 	//观察矩阵
-	//glm::mat4 view;
-	//view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
-	//	glm::vec3(0.0f, 0.0f, 0.0f),
-	//	glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 view;
 
 	//投影矩阵
 	glm::mat4 projection;
@@ -222,7 +224,6 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	
 	int ii = 0;
-	float radius = 10.0f;
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
@@ -252,13 +253,7 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
-
-		float camX = sin(glfwGetTime()) * radius;
-		float camZ = cos(glfwGetTime()) * radius;
-		glm::mat4 view;
-		view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f));
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
@@ -299,5 +294,23 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)//检查返回键（Esc）是否被按下
 	{
 		glfwSetWindowShouldClose(window, true);
+	}
+
+	float cameraSpeed = 0.05f;
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		cameraPos += cameraSpeed * cameraFront;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		cameraPos -= cameraSpeed * cameraFront;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		cameraPos -= cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+		cameraPos += cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
 	}
 }
