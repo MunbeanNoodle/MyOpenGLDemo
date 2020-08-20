@@ -182,20 +182,23 @@ int main()
 	ourShader.setInt("ourTexture1", 0);
 	ourShader.setInt("ourTexture2", 1);
 
-	//平移测试
-	//glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-	//glm::mat4 trans = glm::mat4(1.0f);
-	//trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
-	//vec = trans * vec;
-	//std::cout << vec.x << vec.y << vec.z << std::endl;
-
-	//变换矩阵：逆时针90度，缩放0.5倍
-	/*glm::mat4 trans = glm::mat4(1.0f);
-	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+	//模型矩阵
+	glm::mat4 model(1.0f);
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	
-	unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));*/
+	//观察矩阵
+	glm::mat4 view(1.0f);
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+	//投影矩阵
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(45.0f), 1.0f * 800 / 600, 0.1f, 100.0f);
+
+	glm::mat4 trans(1.0f);
+	trans = projection * view * model;
+	
+	int transLoc = glGetUniformLocation(ourShader.ID, "trans");
+	glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
@@ -206,13 +209,6 @@ int main()
 		//在循环开始时清屏
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);//设置清屏颜色【状态设置】
 		glClear(GL_COLOR_BUFFER_BIT);//清空颜色缓冲，整个颜色缓冲填充为清屏颜色【状态使用】
-
-		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0, 0.0, 1.0));
-
-		unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		//渲染指令
 		//......
