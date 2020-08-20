@@ -207,7 +207,7 @@ int main()
 	
 	//观察矩阵
 	glm::mat4 view(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
 
 	//投影矩阵
 	glm::mat4 projection;
@@ -219,6 +219,8 @@ int main()
 	//启用深度测试
 	glEnable(GL_DEPTH_TEST);
 	
+	int ii = 0;
+
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
 	{
@@ -245,26 +247,28 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
-		
+
 		glBindVertexArray(VAO);
 		for (unsigned int i = 0; i < 10; i++)
 		{
 			//模型矩阵
 			glm::mat4 model(1.0f);
 			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
+			float angle = 20.0f *(i + 1);
+			angle += ii;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));//不是正在旋转，都是旋转过的，角度不同
 			
 			trans = projection * view * model;
 
 			int transLoc = glGetUniformLocation(ourShader.ID, "trans");
 			glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
-			
+
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		ii = ii+1;
 		glfwSwapBuffers(window);//交换颜色缓冲（储存GLFW窗口每一个像素颜色值的大缓冲），在本次循环中用来绘制并输出
 		glfwPollEvents();//检查是否触发事件（键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数
 	}
