@@ -33,20 +33,18 @@ unsigned int indices[] =
 //顶点着色器源码，使用着色器语言GLSL(OpenGL Shading Language)编写
 const char *vertexShaderSrc = "#version 330 core\n"//起始于版本声明，与OpenGL版本相匹配
 	"layout (location = 0) in vec3 aPos;\n"//in关键字，声明所有输入顶点属性(Input Vertex Attribute); layout(location = 0)设定输入变量的位置值
-	"out vec4 vertexColor;"//为片段着色器指定一个颜色输出
 	"void main()\n"
 	"{\n"
 		"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);"//对gl_Position变量赋值设置输出
-		"vertexColor = vec4(0.5, 0.0, 0.0, 1.0);"//暗红
 	"}\n\0";
 
 //片段着色器源码
 const char *fragmentShaderSrc = "#version 330 core\n"
 "out vec4 FragColor;"//out关键字，声明输出变量，表示最终输出的颜色
-"in vec4 vertexColor;"//名称相同、类型相同的从顶点着色器传来的输入变量
+"uniform vec4 ourColor;"//在着色器外设定这个变量
 	"void main()\n"
 	"{\n"
-		"FragColor = vertexColor;\n"
+		"FragColor = ourColor;\n"
 	"}\0";
 
 //窗口大小改变时，视口也应调整
@@ -178,6 +176,14 @@ int main()
 		//渲染指令
 		//......
 		glUseProgram(shaderProgram);
+
+		//更新uniform颜色
+		float timeValue = float(glfwGetTime());//获取秒数
+		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");//查询uniform ourColor的位置
+		//glUseProgram(shaderProgram);//更新uniform必须先使用shaderProgram
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
 		glBindVertexArray(VAO);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
