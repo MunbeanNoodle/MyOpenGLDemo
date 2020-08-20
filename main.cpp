@@ -15,12 +15,18 @@
 //	-0.5f,  0.5f,  0.0f,//左上角
 //};
 //有重复顶点
+//float vertices[] =
+//{
+//	 0.5f,  0.5f,  0.0f,//右上角
+//	 0.5f, -0.5f,  0.0f,//右下角
+//	-0.5f, -0.5f,  0.0f,//左下角
+//	-0.5f,  0.5f,  0.0f,//左上角
+//};
 float vertices[] =
-{
-	 0.5f,  0.5f,  0.0f,//右上角
-	 0.5f, -0.5f,  0.0f,//右下角
-	-0.5f, -0.5f,  0.0f,//左下角
-	-0.5f,  0.5f,  0.0f,//左上角
+{	//位置					//颜色
+	  0.5f, -0.5f,  0.0f,	1.0f,  0.0f,  0.0f,//右上角
+	 -0.5f, -0.5f,  0.0f,	0.0f,  1.0f,  0.0f,//左下角
+	  0.0f,  0.5f,  0.0f,	0.0f,  0.0f,  1.0f//顶部
 };
 
 //索引，用于索引绘制(Indexed Drawing)
@@ -32,19 +38,22 @@ unsigned int indices[] =
 
 //顶点着色器源码，使用着色器语言GLSL(OpenGL Shading Language)编写
 const char *vertexShaderSrc = "#version 330 core\n"//起始于版本声明，与OpenGL版本相匹配
-	"layout (location = 0) in vec3 aPos;\n"//in关键字，声明所有输入顶点属性(Input Vertex Attribute); layout(location = 0)设定输入变量的位置值
+	"layout (location = 0) in vec3 aPos;\n"//位置变量的属性位置值为0
+	"layout (location = 1) in vec3 aColor;"//颜色变量的属性位置值为1
+	"out vec3 ourColor;"//向片段着色器输出一个颜色
 	"void main()\n"
 	"{\n"
 		"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);"//对gl_Position变量赋值设置输出
+		"ourColor = aColor;"//将ourColor设置为从顶点数据得到的颜色
 	"}\n\0";
 
 //片段着色器源码
 const char *fragmentShaderSrc = "#version 330 core\n"
 "out vec4 FragColor;"//out关键字，声明输出变量，表示最终输出的颜色
-"uniform vec4 ourColor;"//在着色器外设定这个变量
+"in vec3 ourColor;"
 	"void main()\n"
 	"{\n"
-		"FragColor = ourColor;\n"
+		"FragColor = vec4(ourColor, 1.0);\n"
 	"}\0";
 
 //窗口大小改变时，视口也应调整
@@ -160,8 +169,12 @@ int main()
 	glDeleteShader(fragmentShader);
 
 	//链接顶点属性，必须手动指定输入数据的哪一部分对应顶点着色器的哪一个顶点属性
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//位置属性
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	//颜色属性
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
@@ -185,9 +198,9 @@ int main()
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);//交换颜色缓冲（储存GLFW窗口每一个像素颜色值的大缓冲），在本次循环中用来绘制并输出
 		glfwPollEvents();//检查是否触发事件（键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数
