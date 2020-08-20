@@ -33,17 +33,20 @@ unsigned int indices[] =
 //顶点着色器源码，使用着色器语言GLSL(OpenGL Shading Language)编写
 const char *vertexShaderSrc = "#version 330 core\n"//起始于版本声明，与OpenGL版本相匹配
 	"layout (location = 0) in vec3 aPos;\n"//in关键字，声明所有输入顶点属性(Input Vertex Attribute); layout(location = 0)设定输入变量的位置值
+	"out vec4 vertexColor;"//为片段着色器指定一个颜色输出
 	"void main()\n"
 	"{\n"
 		"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);"//对gl_Position变量赋值设置输出
+		"vertexColor = vec4(0.5, 0.0, 0.0, 1.0);"//暗红
 	"}\n\0";
 
 //片段着色器源码
 const char *fragmentShaderSrc = "#version 330 core\n"
-	"out vec4 FragColor;"//out关键字，声明输出变量，表示最终输出的颜色
+"out vec4 FragColor;"//out关键字，声明输出变量，表示最终输出的颜色
+"in vec4 vertexColor;"//名称相同、类型相同的从顶点着色器传来的输入变量
 	"void main()\n"
 	"{\n"
-		"FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"FragColor = vertexColor;\n"
 	"}\0";
 
 //窗口大小改变时，视口也应调整
@@ -101,6 +104,11 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	
+	//可声明的顶点属性数上限
+	int nrAttributes;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+
 	//顶点着色器对象，在运行时动态编译顶点着色器源码
 	unsigned int vertexShader;//ID
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);//创建顶点着色器
@@ -172,7 +180,7 @@ int main()
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);//交换颜色缓冲（储存GLFW窗口每一个像素颜色值的大缓冲），在本次循环中用来绘制并输出
