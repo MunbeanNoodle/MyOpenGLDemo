@@ -89,6 +89,10 @@ glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+//移动速度，时间差Deltatime
+float deltaTime = 0.0f;//当前帧与上一帧的时间差
+float lastFrame = 0.0f;//上一帧的时间
+
 int main()
 {
 	//实例化GLFW窗口
@@ -231,6 +235,11 @@ int main()
 		//std::cout << "Rendering\n" << std::endl;
 		processInput(window);//检查输入，在每一帧做出处理
 
+		//
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		//在循环开始时清屏
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);//设置清屏颜色【状态设置】
 		glClear(GL_COLOR_BUFFER_BIT);//清空颜色缓冲，整个颜色缓冲填充为清屏颜色【状态使用】
@@ -296,7 +305,7 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, true);
 	}
 
-	float cameraSpeed = 0.05f;
+	float cameraSpeed = 2.5f * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
 		cameraPos += cameraSpeed * cameraFront;
