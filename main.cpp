@@ -206,12 +206,14 @@ int main()
 	ourShader.setInt("ourTexture2", 1);
 	
 	//观察矩阵
-	glm::mat4 view(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
+	//glm::mat4 view;
+	//view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
+	//	glm::vec3(0.0f, 0.0f, 0.0f),
+	//	glm::vec3(0.0f, 1.0f, 0.0f));
 
 	//投影矩阵
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(45.0f), 1.0f * 800 / 600, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(50.0f), 1.0f * 800 / 600, 0.1f, 100.0f);
 
 	//变换矩阵
 	glm::mat4 trans(1.0f);
@@ -220,6 +222,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	
 	int ii = 0;
+	float radius = 10.0f;
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
@@ -249,6 +252,14 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
+
+		float camX = sin(glfwGetTime()) * radius;
+		float camZ = cos(glfwGetTime()) * radius;
+		glm::mat4 view;
+		view = glm::lookAt(glm::vec3(camX, 0.0f, camZ),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f));
+
 		for (unsigned int i = 0; i < 10; i++)
 		{
 			//模型矩阵
