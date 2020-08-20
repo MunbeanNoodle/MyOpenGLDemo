@@ -12,38 +12,49 @@
 #include <glm/gtc/type_ptr.hpp>
 
 //顶点数据
-//float vertices[] =
-//{
-//	//第一个三角形
-//	 0.5f,  0.5f,  0.0f,//右上角
-//	 0.5f, -0.5f,  0.0f,//右下角
-//	-0.5f,  0.5f,  0.0f,//左上角
-//	//第二个三角形
-//	 0.5f, -0.5f,  0.0f,//右下角
-//	-0.5f, -0.5f,  0.0f,//左下角
-//	-0.5f,  0.5f,  0.0f,//左上角
-//};
-//有重复顶点
-float vertices[] =
-{	
-	//位置					//颜色				//纹理坐标
-	 0.5f,  0.5f,  0.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,//右上角
-	 0.5f, -0.5f,  0.0f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,//右下角
-	-0.5f, -0.5f,  0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,//左下角
-	-0.5f,  0.5f,  0.0f,	1.0f, 1.0f, 0.0f,	0.0f, 1.0f//左上角
-};
-//float vertices[] =
-//{	//位置					//颜色
-//	  0.5f, -0.5f,  0.0f,	1.0f,  0.0f,  0.0f,//右上角
-//	 -0.5f, -0.5f,  0.0f,	0.0f,  1.0f,  0.0f,//左下角
-//	  0.0f,  0.5f,  0.0f,	0.0f,  0.0f,  1.0f//顶部
-//};
-
-float texCoordsp[] =
+float vertices[] = 
 {
-	0.0f, 0.0f,//左下
-	1.0f, 0.0f,//右下
-	0.5f, 1.0f//顶部
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
 //索引，用于索引绘制(Indexed Drawing)
@@ -115,14 +126,11 @@ int main()
 
 	//链接顶点属性，必须手动指定输入数据的哪一部分对应顶点着色器的哪一个顶点属性
 	//位置属性
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	//颜色属性
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 	//纹理属性
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	Shader ourShader("./shaders/shader.vs", "./shaders/shader.fs");
 
@@ -184,7 +192,7 @@ int main()
 
 	//模型矩阵
 	glm::mat4 model(1.0f);
-	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	
 	//观察矩阵
 	glm::mat4 view(1.0f);
@@ -195,11 +203,11 @@ int main()
 	projection = glm::perspective(glm::radians(45.0f), 1.0f * 800 / 600, 0.1f, 100.0f);
 
 	glm::mat4 trans(1.0f);
-	trans = projection * view * model;
-	
-	int transLoc = glGetUniformLocation(ourShader.ID, "trans");
-	glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
+	/*trans = projection * view * model;*/
 
+	//启用深度测试
+	glEnable(GL_DEPTH_TEST);
+	
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
 	{
@@ -209,6 +217,14 @@ int main()
 		//在循环开始时清屏
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);//设置清屏颜色【状态设置】
 		glClear(GL_COLOR_BUFFER_BIT);//清空颜色缓冲，整个颜色缓冲填充为清屏颜色【状态使用】
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		//旋转
+		model = glm::rotate(model, /*(float)glfwGetTime()**/glm::radians(1.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+		trans = projection * view * model;
+
+		int transLoc = glGetUniformLocation(ourShader.ID, "trans");
+		glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		//渲染指令
 		//......
@@ -227,9 +243,9 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);//交换颜色缓冲（储存GLFW窗口每一个像素颜色值的大缓冲），在本次循环中用来绘制并输出
 		glfwPollEvents();//检查是否触发事件（键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数
