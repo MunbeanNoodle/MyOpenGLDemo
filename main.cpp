@@ -1,8 +1,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include <iostream>
+
 #include "Shader.h"
+
 #include "stb_image.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 //顶点数据
 //float vertices[] =
@@ -174,6 +181,21 @@ int main()
 	ourShader.use();
 	ourShader.setInt("ourTexture1", 0);
 	ourShader.setInt("ourTexture2", 1);
+
+	//平移测试
+	//glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+	//glm::mat4 trans = glm::mat4(1.0f);
+	//trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
+	//vec = trans * vec;
+	//std::cout << vec.x << vec.y << vec.z << std::endl;
+
+	//变换矩阵：逆时针90度，缩放0.5倍
+	glm::mat4 trans = glm::mat4(1.0f);
+	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+	
+	unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
