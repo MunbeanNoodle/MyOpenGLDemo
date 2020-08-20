@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "Shader.h"
+#include "stb_image.h"
 
 //顶点数据
 //float vertices[] =
@@ -16,18 +17,26 @@
 //	-0.5f,  0.5f,  0.0f,//左上角
 //};
 //有重复顶点
-//float vertices[] =
-//{
-//	 0.5f,  0.5f,  0.0f,//右上角
-//	 0.5f, -0.5f,  0.0f,//右下角
-//	-0.5f, -0.5f,  0.0f,//左下角
-//	-0.5f,  0.5f,  0.0f,//左上角
-//};
 float vertices[] =
-{	//位置					//颜色
-	  0.5f, -0.5f,  0.0f,	1.0f,  0.0f,  0.0f,//右上角
-	 -0.5f, -0.5f,  0.0f,	0.0f,  1.0f,  0.0f,//左下角
-	  0.0f,  0.5f,  0.0f,	0.0f,  0.0f,  1.0f//顶部
+{	
+	//位置					//颜色				//纹理坐标
+	 0.5f,  0.5f,  0.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,//右上角
+	 0.5f, -0.5f,  0.0f,	0.0f, 1.0f, 0.0f,	1.0f, 0.0f,//右下角
+	-0.5f, -0.5f,  0.0f,	0.0f, 0.0f, 1.0f,	0.0f, 0.0f,//左下角
+	-0.5f,  0.5f,  0.0f,	1.0f, 1.0f, 0.0f,	0.0f, 1.0f//左上角
+};
+//float vertices[] =
+//{	//位置					//颜色
+//	  0.5f, -0.5f,  0.0f,	1.0f,  0.0f,  0.0f,//右上角
+//	 -0.5f, -0.5f,  0.0f,	0.0f,  1.0f,  0.0f,//左下角
+//	  0.0f,  0.5f,  0.0f,	0.0f,  0.0f,  1.0f//顶部
+//};
+
+float texCoordsp[] =
+{
+	0.0f, 0.0f,//左下
+	1.0f, 0.0f,//右下
+	0.5f, 1.0f//顶部
 };
 
 //索引，用于索引绘制(Indexed Drawing)
@@ -99,13 +108,42 @@ int main()
 
 	//链接顶点属性，必须手动指定输入数据的哪一部分对应顶点着色器的哪一个顶点属性
 	//位置属性
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	//颜色属性
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	//纹理属性
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 	Shader ourShader("./shaders/shader.vs", "./shaders/shader.fs");
+
+	//加载纹理（木箱）
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load("./textures/container.jpg", &width, &height, &nrChannels, 0);
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	//设置环绕、过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (data)
+	{
+		//生成纹理
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		//生成mipmap
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	//释放图像内存
+	stbi_image_free(data);
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
@@ -127,10 +165,11 @@ int main()
 		////glUseProgram(shaderProgram);//更新uniform必须先使用shaderProgram
 		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
+		glBindTexture(GL_TEXTURE_2D, texture);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);//交换颜色缓冲（储存GLFW窗口每一个像素颜色值的大缓冲），在本次循环中用来绘制并输出
 		glfwPollEvents();//检查是否触发事件（键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数
