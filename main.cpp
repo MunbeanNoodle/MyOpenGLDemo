@@ -123,9 +123,9 @@ int main()
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load("./textures/container.jpg", &width, &height, &nrChannels, 0);
 
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	unsigned int texture1;
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
 	//设置环绕、过滤方式
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -140,10 +140,40 @@ int main()
 	}
 	else
 	{
-		std::cout << "Failed to load texture" << std::endl;
+		std::cout << "Failed to load texture1" << std::endl;
+	}
+	//释放图像内存
+	//stbi_image_free(data);
+
+	stbi_set_flip_vertically_on_load(true);
+	data = stbi_load("./textures/awesomeface.jpg", &width, &height, &nrChannels, 0);
+
+	unsigned int texture2;
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	//设置环绕、过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (data)
+	{
+		//生成纹理
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		//生成mipmap
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture2" << std::endl;
 	}
 	//释放图像内存
 	stbi_image_free(data);
+	
+	//每个着色器采样器属于哪个纹理单元
+	ourShader.use();
+	ourShader.setInt("ourTexture1", 0);
+	ourShader.setInt("ourTexture2", 1);
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
@@ -164,8 +194,13 @@ int main()
 		//int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");//查询uniform ourColor的位置
 		////glUseProgram(shaderProgram);//更新uniform必须先使用shaderProgram
 		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
-		glBindTexture(GL_TEXTURE_2D, texture);
+		
+		//纹理单元；能在片段着色器中设置多个纹理
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		
 		glBindVertexArray(VAO);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//线框模式(Wireframe Mode)，para1 指应用到所有三角形正、背面
