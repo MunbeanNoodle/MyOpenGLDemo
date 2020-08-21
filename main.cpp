@@ -83,6 +83,17 @@ unsigned int indices[] =
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 //简单的输入控制
 void processInput(GLFWwindow *window);
+//鼠标事件
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+//初始鼠标位置
+float lastX = 400;
+float lastY = 300;
+//是否第一次获取鼠标输入
+bool firstMouse = true;
+//滚轮输入
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+float fov = 45.0f;
 
 //摄像机
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -92,6 +103,10 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 //移动速度，时间差Deltatime
 float deltaTime = 0.0f;//当前帧与上一帧的时间差
 float lastFrame = 0.0f;//上一帧的时间
+
+//欧拉角
+float pitch, yaw;
+glm::vec3 direction(0.0f, 0.0f, 0.0f);//与front相反
 
 int main()
 {
@@ -219,14 +234,20 @@ int main()
 
 	//投影矩阵
 	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(50.0f), 1.0f * 800 / 600, 0.1f, 100.0f);
 
 	//变换矩阵
 	glm::mat4 trans(1.0f);
 
 	//启用深度测试
 	glEnable(GL_DEPTH_TEST);
-	
+
+	//捕捉光标；隐藏光标
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//鼠标事件
+	glfwSetCursorPosCallback(window, mouse_callback);
+	//滚轮事件
+	glfwSetScrollCallback(window, scroll_callback);
+
 	int ii = 0;
 
 	//渲染循环/迭代
@@ -263,6 +284,7 @@ int main()
 
 		glBindVertexArray(VAO);
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		projection = glm::perspective(glm::radians(fov), 1.0f * 800 / 600, 0.1f, 100.0f);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
@@ -306,20 +328,72 @@ void processInput(GLFWwindow *window)
 	}
 
 	float cameraSpeed = 2.5f * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		cameraPos += cameraSpeed * cameraFront;
 	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		cameraPos -= cameraSpeed * cameraFront;
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		cameraPos -= cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
 	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		cameraPos += cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
+	}
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
+
+	float sensitivity = 0.05f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	if (pitch > 89.0f)
+	{
+		pitch = 89.0f;
+	}
+	if (pitch < -89.0f)
+	{
+		pitch = -89.0f;
+	}
+
+	direction.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	direction.y = sin(glm::radians(pitch));
+	direction.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	cameraFront = glm::normalize(direction);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	if (fov >= 1.0f && fov <= 45.0f)
+	{
+		fov -= yoffset;
+	}
+	if (fov <= 1.0f)
+	{
+		fov = 1.0f;
+	}
+	if (fov >= 45.0f)
+	{
+		fov = 45.0f;
 	}
 }
