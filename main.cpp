@@ -177,6 +177,24 @@ int main()
 	//trans uniform location
 	int transLoc;
 	
+	ourShader.use();
+	//材质
+	int ambientLoc = glGetUniformLocation(ourShader.ID, "material.ambient");
+	glUniform3fv(ambientLoc, 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
+	int diffuseLoc = glGetUniformLocation(ourShader.ID, "material.diffuse");
+	glUniform3fv(diffuseLoc, 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
+	int specularLoc = glGetUniformLocation(ourShader.ID, "material.specular");
+	glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	int shininessLoc = glGetUniformLocation(ourShader.ID, "material.shininess");
+	glUniform1f(shininessLoc, 32.0f);
+	//光的属性
+	int lAmbientLoc = glGetUniformLocation(ourShader.ID, "light.ambient");
+	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(glm::vec3(0.2f, 0.2f, 0.2f)));
+	int lDiffuseLoc = glGetUniformLocation(ourShader.ID, "light.diffuse");
+	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	int lSpecularLoc = glGetUniformLocation(ourShader.ID, "light.specular");
+	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
 	{
