@@ -74,13 +74,6 @@ glm::vec3 cubePositions[] =
   glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
-//索引，用于索引绘制(Indexed Drawing)
-unsigned int indices[] =
-{
-	0, 1, 3, //第一个三角形
-	1, 2, 3  //第二个三角形
-};
-
 //窗口大小改变时，视口也应调整
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 //简单的输入控制
@@ -106,17 +99,19 @@ float deltaTime = 0.0f;//当前帧与上一帧的时间差
 float lastFrame = 0.0f;//上一帧的时间
 
 //光照
-glm::vec3 lightColor(0.33f, 0.42f, 0.18f);//光源颜色；橄榄绿
-glm::vec3 toyColor(1.0f, 0.5f, 0.31f);//物体颜色
-glm::vec3 resultColor = lightColor * toyColor;//反射颜色
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f);//光源颜色；橄榄绿
+glm::vec3 objectColor(1.0f, 0.5f, 0.31f);//物体颜色
+glm::vec3 resultColor = lightColor * objectColor;//反射颜色
+//光源位置
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
 	//实例化GLFW窗口
 	glfwInit();//初始化GLFW
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);//para1是选项的名称，来自很多以GLFW_开头的枚举值
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);//para2接受一个整型，来设置这个选项
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//核心模式
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);//Mac OS X系统需要
 
 	//创建窗口对象
@@ -130,7 +125,6 @@ int main()
 	glfwMakeContextCurrent(window);//通知GLFW将窗口上下文设置为当前线程的主上下文
 
 	//GLAD管理OpenGL函数指针
-	//初始化GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -138,42 +132,37 @@ int main()
 	}
 
 	//视口(Viewport)，即OpenGL渲染窗口的尺寸
-	glViewport(0, 0, 800, 600);//para1和para2控制窗口左下角的位置，para3和para4控制渲染窗口宽度和高度
+	glViewport(0, 0, 800, 600);
 	//注册视口调整回调函数
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	//顶点数组对象(Vertex Array Object, VAO)，之后的顶点属性调用都会储存在这个VAO中
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-
-	//顶点缓冲对象(Vertex Buffer Object, VBO)，把顶点数据储存在显卡的内存中
-	unsigned int VBO;//ID
-	glGenBuffers(1, &VBO);//生成VBO对象
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);//把新创建的缓冲绑定到GL_ARRAY_BUFFER目标上
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);//把定义的顶点数据复制到缓冲的内存中
-	//GL_STATIC_DRAW 数据(几乎)不会改变; GL_DYNAMIC_DRAW 数据会改变; GL_STREAM_DRAW 数据每次绘制时都会改变
-
-	//索引缓冲对象(Element Buffer Object, EBO or Index Buffer Object, IBO)，储存不同的点
-	unsigned int EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	
-	//可声明的顶点属性数上限
-	int nrAttributes;
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	//链接顶点属性，必须手动指定输入数据的哪一部分对应顶点着色器的哪一个顶点属性
-	//位置属性
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	//纹理属性
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	//灯（光源）VAO
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
 	Shader ourShader("./shaders/shader.vs", "./shaders/shader.fs");
+	Shader lampShader("./shaders/light_shader.vs", "./shaders/light_shader.fs");
 
 	//加载纹理（木箱）
 	int width, height, nrChannels;
@@ -255,27 +244,45 @@ int main()
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
 	{
-		//std::cout << "Rendering\n" << std::endl;
-		processInput(window);//检查输入，在每一帧做出处理
 
-		//
+		processInput(window);
+
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
 		//在循环开始时清屏
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);//设置清屏颜色【状态设置】
-		glClear(GL_COLOR_BUFFER_BIT);//清空颜色缓冲，整个颜色缓冲填充为清屏颜色【状态使用】
-		glClear(GL_DEPTH_BUFFER_BIT);//清空深度缓冲
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
 
 		//渲染指令
-		//......
+
+		view = camera.GetViewMatrix();
+		projection = glm::perspective(glm::radians(camera.zoom), 1.0f * 800 / 600, 0.1f, 100.0f);
+
+		//绘制灯光立方体
+		lampShader.use();
+
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f));
+		glm::mat4 trans1 = projection * view * model;
+
+		int transLoc = glGetUniformLocation(lampShader.ID, "trans");
+		glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans1));
+
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//绘制目标立方体
 		ourShader.use();
-		//更新uniform颜色
-		//float timeValue = float(glfwGetTime());//获取秒数
-		//float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(ourShader.ID, "ourColor");//查询uniform ourColor的位置
-		glUniform3fv(vertexColorLocation, 1, glm::value_ptr(resultColor));
+
+		int vertexColorLocation = glGetUniformLocation(ourShader.ID, "lightColor");//查询uniform的位置
+		glUniform3fv(vertexColorLocation, 1, glm::value_ptr(lightColor));
+
+		vertexColorLocation = glGetUniformLocation(ourShader.ID, "objectColor");//查询uniform的位置
+		glUniform3fv(vertexColorLocation, 1, glm::value_ptr(objectColor));
 		
 		//纹理单元；能在片段着色器中设置多个纹理
 		glActiveTexture(GL_TEXTURE0);
@@ -284,8 +291,6 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
-		view = camera.GetViewMatrix();
-		projection = glm::perspective(glm::radians(camera.zoom), 1.0f * 800 / 600, 0.1f, 100.0f);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
