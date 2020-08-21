@@ -105,6 +105,11 @@ Camera camera(cameraPos);
 float deltaTime = 0.0f;//当前帧与上一帧的时间差
 float lastFrame = 0.0f;//上一帧的时间
 
+//光照
+glm::vec3 lightColor(0.33f, 0.42f, 0.18f);//光源颜色；橄榄绿
+glm::vec3 toyColor(1.0f, 0.5f, 0.31f);//物体颜色
+glm::vec3 resultColor = lightColor * toyColor;//反射颜色
+
 int main()
 {
 	//实例化GLFW窗口
@@ -269,9 +274,8 @@ int main()
 		//更新uniform颜色
 		//float timeValue = float(glfwGetTime());//获取秒数
 		//float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		//int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");//查询uniform ourColor的位置
-		////glUseProgram(shaderProgram);//更新uniform必须先使用shaderProgram
-		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		int vertexColorLocation = glGetUniformLocation(ourShader.ID, "ourColor");//查询uniform ourColor的位置
+		glUniform3fv(vertexColorLocation, 1, glm::value_ptr(resultColor));
 		
 		//纹理单元；能在片段着色器中设置多个纹理
 		glActiveTexture(GL_TEXTURE0);
