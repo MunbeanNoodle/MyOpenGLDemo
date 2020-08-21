@@ -187,11 +187,8 @@ int main()
 	glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
 	int shininessLoc = glGetUniformLocation(ourShader.ID, "material.shininess");
 	glUniform1f(shininessLoc, 32.0f);
+
 	//光的属性
-	int lAmbientLoc = glGetUniformLocation(ourShader.ID, "light.ambient");
-	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(glm::vec3(0.2f, 0.2f, 0.2f)));
-	int lDiffuseLoc = glGetUniformLocation(ourShader.ID, "light.diffuse");
-	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
 	int lSpecularLoc = glGetUniformLocation(ourShader.ID, "light.specular");
 	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 
@@ -257,6 +254,19 @@ int main()
 
 		int viewPosLoc = glGetUniformLocation(ourShader.ID, "viewPos");
 		glUniform3fv(viewPosLoc, 1, glm::value_ptr(camera.m_position));
+
+		//不同光源颜色
+		lightColor.x = sin(glfwGetTime()*2.0f);
+		lightColor.y = sin(glfwGetTime()*0.7f + 0.4f);
+		lightColor.z = sin(glfwGetTime()*1.3f + 0.8f);
+
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+		int lAmbientLoc = glGetUniformLocation(ourShader.ID, "light.ambient");
+		glUniform3fv(lAmbientLoc, 1, glm::value_ptr(ambientColor));
+		int lDiffuseLoc = glGetUniformLocation(ourShader.ID, "light.diffuse");
+		glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(diffuseColor));
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glBindVertexArray(VAO);
