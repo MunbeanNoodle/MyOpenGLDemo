@@ -11,6 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Camera.h"
+
 //顶点数据
 float vertices[] = 
 {
@@ -97,16 +99,11 @@ float fov = 45.0f;
 
 //摄像机
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+Camera camera(cameraPos);
 
 //移动速度，时间差Deltatime
 float deltaTime = 0.0f;//当前帧与上一帧的时间差
 float lastFrame = 0.0f;//上一帧的时间
-
-//欧拉角
-float pitch, yaw;
-glm::vec3 direction(0.0f, 0.0f, 0.0f);//与front相反
 
 int main()
 {
@@ -283,8 +280,8 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glBindVertexArray(VAO);
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		projection = glm::perspective(glm::radians(fov), 1.0f * 800 / 600, 0.1f, 100.0f);
+		view = camera.GetViewMatrix();
+		projection = glm::perspective(glm::radians(camera.zoom), 1.0f * 800 / 600, 0.1f, 100.0f);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
@@ -327,22 +324,21 @@ void processInput(GLFWwindow *window)
 		glfwSetWindowShouldClose(window, true);
 	}
 
-	float cameraSpeed = 2.5f * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		cameraPos += cameraSpeed * cameraFront;
+		camera.ProcessKeyboard(Camera_Movement::FORWARD, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		cameraPos -= cameraSpeed * cameraFront;
+		camera.ProcessKeyboard(Camera_Movement::BACKWARD, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		cameraPos -= cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
+		camera.ProcessKeyboard(Camera_Movement::LEFT, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		cameraPos += cameraSpeed * glm::normalize(glm::cross(cameraFront, cameraUp));
+		camera.ProcessKeyboard(Camera_Movement::RIGHT, deltaTime);
 	}
 }
 
@@ -360,40 +356,10 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	float sensitivity = 0.05f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	if (pitch > 89.0f)
-	{
-		pitch = 89.0f;
-	}
-	if (pitch < -89.0f)
-	{
-		pitch = -89.0f;
-	}
-
-	direction.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	cameraFront = glm::normalize(direction);
+	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	if (fov >= 1.0f && fov <= 45.0f)
-	{
-		fov -= yoffset;
-	}
-	if (fov <= 1.0f)
-	{
-		fov = 1.0f;
-	}
-	if (fov >= 45.0f)
-	{
-		fov = 45.0f;
-	}
+	camera.ProceesMouseScroll(yoffset);
 }
