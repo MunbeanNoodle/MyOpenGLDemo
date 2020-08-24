@@ -174,7 +174,7 @@ int main()
 	int diffuseLoc = glGetUniformLocation(ourShader.ID, "material.diffuse");
 	glUniform3fv(diffuseLoc, 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
 	int specularLoc = glGetUniformLocation(ourShader.ID, "material.specular");
-	glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.8f)));
 	int shininessLoc = glGetUniformLocation(ourShader.ID, "material.shininess");
 	glUniform1f(shininessLoc, 32.0f);
 
@@ -189,6 +189,17 @@ int main()
 	//纹理
 	Material material("./textures/container2.jpg");
 	material.genTexture();
+	Material specMaterial("./textures/container2_specular.jpg");
+	specMaterial.genTexture();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, material.ID);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, specMaterial.ID);
+
+	ourShader.use();
+	glUniform1i(glGetUniformLocation(ourShader.ID, "material.diffuse"), 0);
+	glUniform1i(glGetUniformLocation(ourShader.ID, "material.specular"), 1);
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
