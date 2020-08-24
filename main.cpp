@@ -13,66 +13,8 @@
 
 #include "Camera.h"
 #include "Material.h"
-
-//顶点数据
-float vertices[] = 
-{
-	// positions          // normals           // texture coords
-	  -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-	   0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-	   0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-	   0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-	  -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-	  -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-	  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-	   0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-	   0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-	   0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-	  -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-	  -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-
-	  -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-	  -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-	  -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	  -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	  -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-	  -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-	   0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-	   0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-	   0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	   0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-	   0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-	   0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-	  -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-	   0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-	   0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-	   0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-	  -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-	  -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-	  -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-	   0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-	   0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-	   0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-	  -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-	  -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-};
-
-glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-};
+#include "Model.h"
+#include "Light.h"
 
 //窗口大小改变时，视口也应调整
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -88,22 +30,18 @@ bool firstMouse = true;
 //滚轮输入
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-float fov = 45.0f;
+//立方体
+Model cube;
 
 //摄像机
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
-Camera camera(cameraPos);
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+
+//光源
+Light light(1.2f, 1.0f, 2.0f);
 
 //移动速度，时间差Deltatime
 float deltaTime = 0.0f;//当前帧与上一帧的时间差
 float lastFrame = 0.0f;//上一帧的时间
-
-//光照
-glm::vec3 lightColor(1.0f, 1.0f, 1.0f);//光源颜色
-glm::vec3 objectColor(1.0f, 0.5f, 0.4f);//物体颜色
-
-//光源位置
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
@@ -143,7 +81,7 @@ int main()
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube.vertices), cube.vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -154,7 +92,7 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	//灯（光源）VAO
+	//灯立方体VAO
 	unsigned int lightVAO;
 	glGenVertexArrays(1, &lightVAO);
 	glBindVertexArray(lightVAO);
@@ -177,38 +115,30 @@ int main()
 	glm::mat4 projection;
 	//变换矩阵
 	glm::mat4 trans(1.0f);
-	//trans uniform location
-	int transLoc;
 	
 	ourShader.use();
 	//材质
-	int ambientLoc = glGetUniformLocation(ourShader.ID, "material.ambient");
-	glUniform3fv(ambientLoc, 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
-	int diffuseLoc = glGetUniformLocation(ourShader.ID, "material.diffuse");
-	glUniform3fv(diffuseLoc, 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
-	int specularLoc = glGetUniformLocation(ourShader.ID, "material.specular");
-	glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.5f)));
-	int shininessLoc = glGetUniformLocation(ourShader.ID, "material.shininess");
-	glUniform1f(shininessLoc, 32.0f);
+	ourShader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+	ourShader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+	ourShader.setVec3("material.specular", glm::vec3(0.5f));
+	ourShader.setFloat("material.shininess", 32.0f);
 
 	//光的属性
-	//int lDirectionLoc = glGetUniformLocation(ourShader.ID, "light.direction");
-	//glUniform3fv(lDirectionLoc, 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
-	int lSpecularLoc = glGetUniformLocation(ourShader.ID, "light.specular");
-	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
-	int lAmbientLoc = glGetUniformLocation(ourShader.ID, "light.ambient");
-	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(glm::vec3(0.2f)));
-	int lDiffuseLoc = glGetUniformLocation(ourShader.ID, "light.diffuse");
-	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(glm::vec3(0.8f)));
+	ourShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	ourShader.setVec3("light.ambient", glm::vec3(0.2f));
+	ourShader.setVec3("light.diffuse", glm::vec3(0.8f));
+
 	//衰减
-	glUniform1f(glGetUniformLocation(ourShader.ID, "light.constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(ourShader.ID, "light.linear"), 0.045f);
-	glUniform1f(glGetUniformLocation(ourShader.ID, "light.quadratic"), 0.0075f);
-	glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(lightPos));
+	ourShader.setFloat("light.constant", 1.0f);
+	ourShader.setFloat("light.linear", 0.045f);
+	ourShader.setFloat("light.quadratic", 0.0075f);
+	ourShader.setVec3("light.position", light.m_position);
+
 	//聚光/手电筒
-	glUniform1f(glGetUniformLocation(ourShader.ID, "light.cutOff"), glm::cos(glm::radians(12.5f)));
+	ourShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+
 	//平滑/软化边缘
-	glUniform1f(glGetUniformLocation(ourShader.ID, "light.outerCutOff"), glm::cos(glm::radians(17.5f)));
+	ourShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 
 	//纹理
 	Material material("./textures/container2.jpg");
@@ -222,8 +152,8 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, specMaterial.ID);
 
 	ourShader.use();
-	glUniform1i(glGetUniformLocation(ourShader.ID, "material.diffuse"), 0);
-	glUniform1i(glGetUniformLocation(ourShader.ID, "material.specular"), 1);
+	ourShader.setInt("material.diffuse", 0);
+	ourShader.setInt("material.specular", 1);
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
@@ -252,12 +182,11 @@ int main()
 
 		/*lightPos.x = sin(glfwGetTime())*3.0f;
 		lightPos.z = cos(glfwGetTime())*3.0f;*/
-		model = glm::translate(model, lightPos);
+		model = glm::translate(model, light.m_position);
 		model = glm::scale(model, glm::vec3(0.2f));
 		trans = projection * view * model;
 
-		transLoc = glGetUniformLocation(lampShader.ID, "trans");
-		glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		lampShader.setMat4("trans", trans);
 
 		glBindVertexArray(lightVAO);
 		//glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -265,35 +194,22 @@ int main()
 		//绘制目标立方体
 		ourShader.use();
 
-		int vertexColorLocation = glGetUniformLocation(ourShader.ID, "lightColor");//查询uniform的位置
-		glUniform3fv(vertexColorLocation, 1, glm::value_ptr(lightColor));
-
-		vertexColorLocation = glGetUniformLocation(ourShader.ID, "objectColor");//查询uniform的位置
-		glUniform3fv(vertexColorLocation, 1, glm::value_ptr(objectColor));
-
-		int lightPosLoc = glGetUniformLocation(ourShader.ID, "lightPos");//查询uniform的位置
-		glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
-
-		int viewPosLoc = glGetUniformLocation(ourShader.ID, "viewPos");
-		glUniform3fv(viewPosLoc, 1, glm::value_ptr(camera.m_position));
+		ourShader.setVec3("viewPos", camera.m_position);
 
 		//聚光/手电筒
-		glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(camera.m_position));
-		glUniform3fv(glGetUniformLocation(ourShader.ID, "light.direction"), 1, glm::value_ptr(camera.m_front));
+		ourShader.setVec3("light.position", camera.m_position);
+		ourShader.setVec3("light.direction", camera.m_front);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
+			model = glm::translate(model, cube.positions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			trans = projection * view * model;
 
-			transLoc = glGetUniformLocation(ourShader.ID, "trans");
-			glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-			int modelLoc = glGetUniformLocation(ourShader.ID, "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			ourShader.setMat4("trans", trans);
+			ourShader.setMat4("model", model);
 
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			glBindVertexArray(VAO);
