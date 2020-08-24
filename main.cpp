@@ -187,20 +187,25 @@ int main()
 	int diffuseLoc = glGetUniformLocation(ourShader.ID, "material.diffuse");
 	glUniform3fv(diffuseLoc, 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
 	int specularLoc = glGetUniformLocation(ourShader.ID, "material.specular");
-	glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.8f)));
+	glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.5f)));
 	int shininessLoc = glGetUniformLocation(ourShader.ID, "material.shininess");
 	glUniform1f(shininessLoc, 32.0f);
 
 	//光的属性
 	int lDirectionLoc = glGetUniformLocation(ourShader.ID, "light.direction");
-	glUniform3fv(lDirectionLoc, 1, glm::value_ptr(glm::vec3(-0.0f, -0.0f, -2.0f)));
+	glUniform3fv(lDirectionLoc, 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
 	int lSpecularLoc = glGetUniformLocation(ourShader.ID, "light.specular");
 	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 	int lAmbientLoc = glGetUniformLocation(ourShader.ID, "light.ambient");
-	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(glm::vec3(0.5f)));
 	int lDiffuseLoc = glGetUniformLocation(ourShader.ID, "light.diffuse");
-	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
-
+	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(glm::vec3(0.8f)));
+	//衰减
+	glUniform1f(glGetUniformLocation(ourShader.ID, "light.constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(ourShader.ID, "light.linear"), 0.09f);
+	glUniform1f(glGetUniformLocation(ourShader.ID, "light.quadratic"), 0.032f);
+	glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(lightPos));
+	
 	//纹理
 	Material material("./textures/container2.jpg");
 	material.genTexture();
@@ -251,7 +256,7 @@ int main()
 		glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glBindVertexArray(lightVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//绘制目标立方体
 		ourShader.use();
