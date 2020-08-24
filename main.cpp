@@ -134,52 +134,52 @@ int main()
 
 	//定向光
 	ourShader.setVec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-	ourShader.setVec3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	ourShader.setVec3("dirLight.diffuse", glm::vec3(0.4f, 0.4f, 0.4f));
+	ourShader.setVec3("dirLight.ambient", glm::vec3(0.3f, 0.24f, 0.14f));
+	ourShader.setVec3("dirLight.diffuse", glm::vec3(0.7f, 0.42f, 0.26f));
 	ourShader.setVec3("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
 
 	//点光源
 	// point light 1
 	ourShader.setVec3("pointLights[0].position", light.pointLightPositions[0]);
-	ourShader.setVec3("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	ourShader.setVec3("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-	ourShader.setVec3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	ourShader.setVec3("pointLights[0].ambient", light.pointLightColors[0] * glm::vec3(0.1f));
+	ourShader.setVec3("pointLights[0].diffuse", light.pointLightColors[0]);
+	ourShader.setVec3("pointLights[0].specular", light.pointLightColors[0]);
 	ourShader.setFloat("pointLights[0].constant", 1.0f);
 	ourShader.setFloat("pointLights[0].linear", 0.09);
 	ourShader.setFloat("pointLights[0].quadratic", 0.032);
 	// point light 2
 	ourShader.setVec3("pointLights[1].position", light.pointLightPositions[1]);
-	ourShader.setVec3("pointLights[1].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	ourShader.setVec3("pointLights[1].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-	ourShader.setVec3("pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	ourShader.setVec3("pointLights[1].ambient", light.pointLightColors[1] * glm::vec3(0.1f));
+	ourShader.setVec3("pointLights[1].diffuse", light.pointLightColors[1]);
+	ourShader.setVec3("pointLights[1].specular", light.pointLightColors[1]);
 	ourShader.setFloat("pointLights[1].constant", 1.0f);
 	ourShader.setFloat("pointLights[1].linear", 0.09);
 	ourShader.setFloat("pointLights[1].quadratic", 0.032);
 	// point light 3
 	ourShader.setVec3("pointLights[2].position", light.pointLightPositions[2]);
-	ourShader.setVec3("pointLights[2].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	ourShader.setVec3("pointLights[2].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-	ourShader.setVec3("pointLights[2].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	ourShader.setVec3("pointLights[2].ambient", light.pointLightColors[2] * glm::vec3(0.1f));
+	ourShader.setVec3("pointLights[2].diffuse", light.pointLightColors[2]);
+	ourShader.setVec3("pointLights[2].specular", light.pointLightColors[2]);
 	ourShader.setFloat("pointLights[2].constant", 1.0f);
 	ourShader.setFloat("pointLights[2].linear", 0.09);
 	ourShader.setFloat("pointLights[2].quadratic", 0.032);
 	// point light 4
 	ourShader.setVec3("pointLights[3].position", light.pointLightPositions[3]);
-	ourShader.setVec3("pointLights[3].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-	ourShader.setVec3("pointLights[3].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-	ourShader.setVec3("pointLights[3].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	ourShader.setVec3("pointLights[3].ambient", light.pointLightColors[3] * glm::vec3(0.1f));
+	ourShader.setVec3("pointLights[3].diffuse", light.pointLightColors[3]);
+	ourShader.setVec3("pointLights[3].specular", light.pointLightColors[3]);
 	ourShader.setFloat("pointLights[3].constant", 1.0f);
 	ourShader.setFloat("pointLights[3].linear", 0.09);
 	ourShader.setFloat("pointLights[3].quadratic", 0.032);
 
 	//聚光
-	ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-	ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+	ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(10.0f)));
+	ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(12.5f)));
 	ourShader.setFloat("spotLight.constant", 1.0f);
 	ourShader.setFloat("spotLight.linear", 0.09);
 	ourShader.setFloat("spotLight.quadratic", 0.032);
 	ourShader.setVec3("spotLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-	ourShader.setVec3("spotLight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+	ourShader.setVec3("spotLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
 	ourShader.setVec3("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//渲染循环/迭代
@@ -193,7 +193,7 @@ int main()
 		lastFrame = currentFrame;
 
 		//在循环开始时清屏
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -215,6 +215,7 @@ int main()
 			trans = projection * view * model;		
 			
 			lampShader.setMat4("trans", trans);
+			lampShader.setVec3("outColor", light.pointLightColors[i]);
 
 			glBindVertexArray(lightVAO);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
