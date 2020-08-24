@@ -134,9 +134,9 @@ int main()
 
 	//定向光
 	ourShader.setVec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-	ourShader.setVec3("dirLight.ambient", glm::vec3(0.3f, 0.24f, 0.14f));
-	ourShader.setVec3("dirLight.diffuse", glm::vec3(0.7f, 0.42f, 0.26f));
-	ourShader.setVec3("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+	ourShader.setVec3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.1f));
+	ourShader.setVec3("dirLight.diffuse", glm::vec3(0.2f, 0.2f, 0.7f));
+	ourShader.setVec3("dirLight.specular", glm::vec3(0.7f, 0.7f, 0.7f));
 
 	//点光源
 	// point light 1
@@ -193,7 +193,7 @@ int main()
 		lastFrame = currentFrame;
 
 		//在循环开始时清屏
-		glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
