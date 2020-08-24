@@ -192,20 +192,22 @@ int main()
 	glUniform1f(shininessLoc, 32.0f);
 
 	//光的属性
-	int lDirectionLoc = glGetUniformLocation(ourShader.ID, "light.direction");
-	glUniform3fv(lDirectionLoc, 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
+	//int lDirectionLoc = glGetUniformLocation(ourShader.ID, "light.direction");
+	//glUniform3fv(lDirectionLoc, 1, glm::value_ptr(glm::vec3(-0.2f, -1.0f, -0.3f)));
 	int lSpecularLoc = glGetUniformLocation(ourShader.ID, "light.specular");
 	glUniform3fv(lSpecularLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
 	int lAmbientLoc = glGetUniformLocation(ourShader.ID, "light.ambient");
-	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(glm::vec3(0.5f)));
+	glUniform3fv(lAmbientLoc, 1, glm::value_ptr(glm::vec3(0.2f)));
 	int lDiffuseLoc = glGetUniformLocation(ourShader.ID, "light.diffuse");
 	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(glm::vec3(0.8f)));
 	//衰减
-	glUniform1f(glGetUniformLocation(ourShader.ID, "light.constant"), 1.0f);
+	/*glUniform1f(glGetUniformLocation(ourShader.ID, "light.constant"), 1.0f);
 	glUniform1f(glGetUniformLocation(ourShader.ID, "light.linear"), 0.09f);
 	glUniform1f(glGetUniformLocation(ourShader.ID, "light.quadratic"), 0.032f);
-	glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(lightPos));
-	
+	glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(lightPos));*/
+	//聚光/手电筒
+	glUniform1f(glGetUniformLocation(ourShader.ID, "light.cutOff"), glm::cos(glm::radians(12.5f)));
+
 	//纹理
 	Material material("./textures/container2.jpg");
 	material.genTexture();
@@ -256,7 +258,7 @@ int main()
 		glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//绘制目标立方体
 		ourShader.use();
@@ -266,6 +268,16 @@ int main()
 
 		vertexColorLocation = glGetUniformLocation(ourShader.ID, "objectColor");//查询uniform的位置
 		glUniform3fv(vertexColorLocation, 1, glm::value_ptr(objectColor));
+
+		int lightPosLoc = glGetUniformLocation(ourShader.ID, "lightPos");//查询uniform的位置
+		glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
+
+		int viewPosLoc = glGetUniformLocation(ourShader.ID, "viewPos");
+		glUniform3fv(viewPosLoc, 1, glm::value_ptr(camera.m_position));
+
+		//聚光/手电筒
+		glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(camera.m_position));
+		glUniform3fv(glGetUniformLocation(ourShader.ID, "light.direction"), 1, glm::value_ptr(camera.m_front));
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
@@ -280,12 +292,6 @@ int main()
 
 			int modelLoc = glGetUniformLocation(ourShader.ID, "model");
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-			int lightPosLoc = glGetUniformLocation(ourShader.ID, "lightPos");//查询uniform的位置
-			glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
-
-			int viewPosLoc = glGetUniformLocation(ourShader.ID, "viewPos");
-			glUniform3fv(viewPosLoc, 1, glm::value_ptr(camera.m_position));
 
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			glBindVertexArray(VAO);
