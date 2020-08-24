@@ -207,6 +207,8 @@ int main()
 	glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(lightPos));
 	//聚光/手电筒
 	glUniform1f(glGetUniformLocation(ourShader.ID, "light.cutOff"), glm::cos(glm::radians(12.5f)));
+	//平滑/软化边缘
+	glUniform1f(glGetUniformLocation(ourShader.ID, "light.outerCutOff"), glm::cos(glm::radians(17.5f)));
 
 	//纹理
 	Material material("./textures/container2.jpg");
