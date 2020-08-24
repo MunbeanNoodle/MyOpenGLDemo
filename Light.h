@@ -27,10 +27,10 @@ public:
 	//点光源颜色
 	glm::vec3 pointLightColors[4] = 
 	{
-		glm::vec3(0.1f, 0.1f, 0.1f),
-		glm::vec3(0.1f, 0.1f, 0.1f),
-		glm::vec3(0.1f, 0.1f, 0.1f),
-		glm::vec3(0.3f, 0.1f, 0.1f)
+		glm::vec3(0.4f, 0.7f, 0.1f),
+		glm::vec3(0.4f, 0.7f, 0.1f),
+		glm::vec3(0.4f, 0.7f, 0.1f),
+		glm::vec3(0.4f, 0.7f, 0.1f)
 	};
 };
 #endif // !LIGHT_H

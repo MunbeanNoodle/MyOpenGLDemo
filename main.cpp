@@ -43,6 +43,9 @@ Light light(1.2f, 1.0f, 2.0f);
 float deltaTime = 0.0f;//当前帧与上一帧的时间差
 float lastFrame = 0.0f;//上一帧的时间
 
+int WIDTH = 800;
+int HEIGHT = 600;
+
 int main()
 {
 	//实例化GLFW窗口
@@ -70,7 +73,7 @@ int main()
 	}
 
 	//视口(Viewport)，即OpenGL渲染窗口的尺寸
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, WIDTH, HEIGHT);
 	//注册视口调整回调函数
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -134,9 +137,9 @@ int main()
 
 	//定向光
 	ourShader.setVec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-	ourShader.setVec3("dirLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-	ourShader.setVec3("dirLight.diffuse", glm::vec3(0.05f, 0.05f, 0.05));
-	ourShader.setVec3("dirLight.specular", glm::vec3(0.2f, 0.2f, 0.2f));
+	ourShader.setVec3("dirLight.ambient", glm::vec3(0.5f, 0.5f, 0.5f));
+	ourShader.setVec3("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+	ourShader.setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//点光源
 	// point light 1
@@ -145,42 +148,42 @@ int main()
 	ourShader.setVec3("pointLights[0].diffuse", light.pointLightColors[0]);
 	ourShader.setVec3("pointLights[0].specular", light.pointLightColors[0]);
 	ourShader.setFloat("pointLights[0].constant", 1.0f);
-	ourShader.setFloat("pointLights[0].linear", 0.14);
-	ourShader.setFloat("pointLights[0].quadratic", 0.07);
+	ourShader.setFloat("pointLights[0].linear", 0.07);
+	ourShader.setFloat("pointLights[0].quadratic", 0.017);
 	// point light 2
 	ourShader.setVec3("pointLights[1].position", light.pointLightPositions[1]);
 	ourShader.setVec3("pointLights[1].ambient", light.pointLightColors[1] * glm::vec3(0.1f));
 	ourShader.setVec3("pointLights[1].diffuse", light.pointLightColors[1]);
 	ourShader.setVec3("pointLights[1].specular", light.pointLightColors[1]);
 	ourShader.setFloat("pointLights[1].constant", 1.0f);
-	ourShader.setFloat("pointLights[1].linear", 0.14);
-	ourShader.setFloat("pointLights[1].quadratic", 0.07);
+	ourShader.setFloat("pointLights[1].linear", 0.07);
+	ourShader.setFloat("pointLights[1].quadratic", 0.017);
 	// point light 3
 	ourShader.setVec3("pointLights[2].position", light.pointLightPositions[2]);
 	ourShader.setVec3("pointLights[2].ambient", light.pointLightColors[2] * glm::vec3(0.1f));
 	ourShader.setVec3("pointLights[2].diffuse", light.pointLightColors[2]);
 	ourShader.setVec3("pointLights[2].specular", light.pointLightColors[2]);
 	ourShader.setFloat("pointLights[2].constant", 1.0f);
-	ourShader.setFloat("pointLights[2].linear", 0.14);
-	ourShader.setFloat("pointLights[2].quadratic", 0.07);
+	ourShader.setFloat("pointLights[2].linear", 0.07);
+	ourShader.setFloat("pointLights[2].quadratic", 0.017);
 	// point light 4
 	ourShader.setVec3("pointLights[3].position", light.pointLightPositions[3]);
 	ourShader.setVec3("pointLights[3].ambient", light.pointLightColors[3] * glm::vec3(0.1f));
 	ourShader.setVec3("pointLights[3].diffuse", light.pointLightColors[3]);
 	ourShader.setVec3("pointLights[3].specular", light.pointLightColors[3]);
 	ourShader.setFloat("pointLights[3].constant", 1.0f);
-	ourShader.setFloat("pointLights[3].linear", 0.14);
-	ourShader.setFloat("pointLights[3].quadratic", 0.07);
+	ourShader.setFloat("pointLights[3].linear", 0.07);
+	ourShader.setFloat("pointLights[3].quadratic", 0.017);
 
 	//聚光
-	ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(10.0f)));
-	ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+	ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(7.0f)));
+	ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(10.0f)));
 	ourShader.setFloat("spotLight.constant", 1.0f);
-	ourShader.setFloat("spotLight.linear", 0.09);
-	ourShader.setFloat("spotLight.quadratic", 0.032);
+	ourShader.setFloat("spotLight.linear", 0.07);
+	ourShader.setFloat("spotLight.quadratic", 0.017);
 	ourShader.setVec3("spotLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-	ourShader.setVec3("spotLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-	ourShader.setVec3("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	ourShader.setVec3("spotLight.diffuse", glm::vec3(0.0f, 1.0f, 0.0f));
+	ourShader.setVec3("spotLight.specular", glm::vec3(0.0f, 1.0f, 0.0f));
 
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
@@ -193,7 +196,7 @@ int main()
 		lastFrame = currentFrame;
 
 		//在循环开始时清屏
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -202,7 +205,7 @@ int main()
 
 		//渲染指令
 		view = camera.GetViewMatrix();
-		projection = glm::perspective(glm::radians(camera.zoom), 1.0f * 800 / 600, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(camera.zoom), 1.0f * WIDTH / HEIGHT, 0.1f, 100.0f);
 
 		//绘制灯光立方体
 		lampShader.use();
@@ -256,6 +259,7 @@ int main()
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+	glfwGetWindowSize(window, &WIDTH, &HEIGHT);
 }
 
 void processInput(GLFWwindow *window)
