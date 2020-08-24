@@ -172,6 +172,16 @@ int main()
 	ourShader.setFloat("pointLights[3].linear", 0.09);
 	ourShader.setFloat("pointLights[3].quadratic", 0.032);
 
+	//聚光
+	ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+	ourShader.setFloat("spotLight.constant", 1.0f);
+	ourShader.setFloat("spotLight.linear", 0.09);
+	ourShader.setFloat("spotLight.quadratic", 0.032);
+	ourShader.setVec3("spotLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+	ourShader.setVec3("spotLight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+	ourShader.setVec3("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
 	{
@@ -214,6 +224,9 @@ int main()
 		ourShader.use();
 
 		ourShader.setVec3("viewPos", camera.m_position);
+		//聚光
+		ourShader.setVec3("spotLight.position", camera.m_position);
+		ourShader.setVec3("spotLight.direction", camera.m_front);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
