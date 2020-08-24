@@ -201,10 +201,10 @@ int main()
 	int lDiffuseLoc = glGetUniformLocation(ourShader.ID, "light.diffuse");
 	glUniform3fv(lDiffuseLoc, 1, glm::value_ptr(glm::vec3(0.8f)));
 	//À•ºı
-	/*glUniform1f(glGetUniformLocation(ourShader.ID, "light.constant"), 1.0f);
-	glUniform1f(glGetUniformLocation(ourShader.ID, "light.linear"), 0.09f);
-	glUniform1f(glGetUniformLocation(ourShader.ID, "light.quadratic"), 0.032f);
-	glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(lightPos));*/
+	glUniform1f(glGetUniformLocation(ourShader.ID, "light.constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(ourShader.ID, "light.linear"), 0.045f);
+	glUniform1f(glGetUniformLocation(ourShader.ID, "light.quadratic"), 0.0075f);
+	glUniform3fv(glGetUniformLocation(ourShader.ID, "light.position"), 1, glm::value_ptr(lightPos));
 	//æ€π‚/ ÷µÁÕ≤
 	glUniform1f(glGetUniformLocation(ourShader.ID, "light.cutOff"), glm::cos(glm::radians(12.5f)));
 
