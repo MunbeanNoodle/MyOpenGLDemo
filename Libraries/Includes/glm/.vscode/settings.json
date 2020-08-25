@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "vector": "cpp",
+        "xstring": "cpp",
+        "functional": "cpp",
+        "list": "cpp",
+        "memory": "cpp",
+        "ostream": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "unordered_map": "cpp",
+        "utility": "cpp",
+        "xhash": "cpp",
+        "xlocmon": "cpp",
+        "xmemory0": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp"
+    }
+}

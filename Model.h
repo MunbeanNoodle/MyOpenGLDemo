@@ -2,9 +2,36 @@
 #define MODEL_H
 
 #include <glm/glm.hpp>
+#include "Mesh.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 class Model
 {
+public:
+	//函数
+	Model()
+	{
+
+	}
+	Model(char* path)
+	{
+		loadModel(path);
+	}
+	void Draw(Shader& shader);
+
+private:
+	//模型数据
+	vector<Mesh> meshes;
+	string directory;
+	//函数
+	void loadModel(string path);
+	void processNode(aiNode* node, const aiScene* scene);
+	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+	vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
+	int TextureFromFile(const char* str, string directory);
+
 public:
 	//顶点数据
 	float vertices[6*6*8] =

@@ -105,6 +105,12 @@ int main()
 
 	Shader ourShader("./shaders/shader.vs", "./shaders/shader.fs");
 	Shader lampShader("./shaders/light_shader.vs", "./shaders/light_shader.fs");
+	Shader modelShader("./shaders/model_shader.vs", "./shaders/model_shader.fs");
+
+	std::cout << "BEGIN" << std::endl;
+	//Ä£ĞÍ
+	Model model_01((char*)("./models/soft_cloth_small.obj"));
+	std::cout << "END" << std::endl;
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -246,7 +252,10 @@ int main()
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}		
+		}
+
+		modelShader.use();
+		model_01.Draw(modelShader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
