@@ -1,5 +1,6 @@
 #include "Model.h"
 #include <iostream>
+#include "stb_image.h"
 
 void Model::Draw(Shader& shader)
 {
@@ -48,7 +49,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
-		std::cout << "vertex" << i << std::endl;
+		//std::cout << "vertex" << i << std::endl;
 		Vertex vertex;
 
 		//处理顶点位置、法线和纹理坐标
@@ -76,27 +77,27 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		}
 		
 		vertices.push_back(vertex);
-
-		//处理索引；定义图元应绘制哪些顶点以及绘制的顺序
-		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
-		{
-			aiFace face = mesh->mFaces[i];
-			for (unsigned int j = 0; j < face.mNumIndices; j++)
-			{
-				indices.push_back(face.mIndices[j]);
-			}
-		}
-
-		////处理材质
-		//if (mesh->mMaterialIndex >= 0)
-		//{
-		//	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-		//	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-		//	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-		//	std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-		//	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-		//}
 	}
+
+	//处理索引；定义图元应绘制哪些顶点以及绘制的顺序
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+	{
+		aiFace face = mesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+		{
+			indices.push_back(face.mIndices[j]);
+		}
+	}
+
+	////处理材质
+	//if (mesh->mMaterialIndex >= 0)
+	//{
+	//	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	//	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+	//	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	//	std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+	//	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	//}
 
 	return Mesh(vertices, indices, textures);
 }
@@ -118,7 +119,13 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
 	return textures;
 }
 
-int Model::TextureFromFile(const char* str, string directory)
+unsigned int TextureFromFile(const char* str, string directory)
 {
+	string filename = string(str);
+	filename = directory + '/' + str;
+
+	int width, height, nrChannels;
+	unsigned char* data;
+
 	return 0;
 }

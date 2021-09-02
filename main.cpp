@@ -34,7 +34,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 Model cube;
 
 //摄像机
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+Camera camera(glm::vec3(0.0f, 0.7f, 3.0f));
 
 //光源
 Light light(1.2f, 1.0f, 2.0f);
@@ -84,7 +84,7 @@ int main()
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube.vertices), cube.vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube.cubeVertices/*cube.vertices*/), cube.cubeVertices/*cube.vertices*/, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -107,12 +107,11 @@ int main()
 	Shader lampShader("./shaders/light_shader.vs", "./shaders/light_shader.fs");
 	Shader modelShader("./shaders/model_shader.vs", "./shaders/model_shader.fs");
 
-	std::cout << "BEGIN" << std::endl;
 	//模型
 	Model model_01((char*)("./models/soft_cloth_small.obj"));
-	std::cout << "END" << std::endl;
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -191,6 +190,57 @@ int main()
 	ourShader.setVec3("spotLight.diffuse", glm::vec3(0.0f, 1.0f, 0.0f));
 	ourShader.setVec3("spotLight.specular", glm::vec3(0.0f, 1.0f, 0.0f));
 
+	modelShader.use();
+	//定向光
+	modelShader.setVec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+	modelShader.setVec3("dirLight.ambient", glm::vec3(0.5f, 0.5f, 0.5f));
+	modelShader.setVec3("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+	modelShader.setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+	//点光源
+	// point light 1
+	modelShader.setVec3("pointLights[0].position", light.pointLightPositions[0]);
+	modelShader.setVec3("pointLights[0].ambient", light.pointLightColors[0] * glm::vec3(0.1f));
+	modelShader.setVec3("pointLights[0].diffuse", light.pointLightColors[0]);
+	modelShader.setVec3("pointLights[0].specular", light.pointLightColors[0]);
+	modelShader.setFloat("pointLights[0].constant", 1.0f);
+	modelShader.setFloat("pointLights[0].linear", 0.07);
+	modelShader.setFloat("pointLights[0].quadratic", 0.017);
+	// point light 2
+	modelShader.setVec3("pointLights[1].position", light.pointLightPositions[1]);
+	modelShader.setVec3("pointLights[1].ambient", light.pointLightColors[1] * glm::vec3(0.1f));
+	modelShader.setVec3("pointLights[1].diffuse", light.pointLightColors[1]);
+	modelShader.setVec3("pointLights[1].specular", light.pointLightColors[1]);
+	modelShader.setFloat("pointLights[1].constant", 1.0f);
+	modelShader.setFloat("pointLights[1].linear", 0.07);
+	modelShader.setFloat("pointLights[1].quadratic", 0.017);
+	// point light 3
+	modelShader.setVec3("pointLights[2].position", light.pointLightPositions[2]);
+	modelShader.setVec3("pointLights[2].ambient", light.pointLightColors[2] * glm::vec3(0.1f));
+	modelShader.setVec3("pointLights[2].diffuse", light.pointLightColors[2]);
+	modelShader.setVec3("pointLights[2].specular", light.pointLightColors[2]);
+	modelShader.setFloat("pointLights[2].constant", 1.0f);
+	modelShader.setFloat("pointLights[2].linear", 0.07);
+	modelShader.setFloat("pointLights[2].quadratic", 0.017);
+	// point light 4
+	modelShader.setVec3("pointLights[3].position", light.pointLightPositions[3]);
+	modelShader.setVec3("pointLights[3].ambient", light.pointLightColors[3] * glm::vec3(0.1f));
+	modelShader.setVec3("pointLights[3].diffuse", light.pointLightColors[3]);
+	modelShader.setVec3("pointLights[3].specular", light.pointLightColors[3]);
+	modelShader.setFloat("pointLights[3].constant", 1.0f);
+	modelShader.setFloat("pointLights[3].linear", 0.07);
+	modelShader.setFloat("pointLights[3].quadratic", 0.017);
+
+	//聚光
+	modelShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(7.0f)));
+	modelShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(10.0f)));
+	modelShader.setFloat("spotLight.constant", 1.0f);
+	modelShader.setFloat("spotLight.linear", 0.07);
+	modelShader.setFloat("spotLight.quadratic", 0.017);
+	modelShader.setVec3("spotLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+	modelShader.setVec3("spotLight.diffuse", glm::vec3(0.0f, 1.0f, 0.0f));
+	modelShader.setVec3("spotLight.specular", glm::vec3(0.0f, 1.0f, 0.0f));
+
 	//渲染循环/迭代
 	while (!glfwWindowShouldClose(window))//每次循环开始检查GLFW是否被要求退出
 	{
@@ -254,8 +304,15 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
+		//绘制模型
 		modelShader.use();
-		model_01.Draw(modelShader);
+		modelShader.setMat4("projection", projection);
+		modelShader.setMat4("view", view);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		modelShader.setMat4("model", model);
+		//model_01.Draw(modelShader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
